@@ -1,0 +1,143 @@
+{
+  "name": "master",
+  "description": "Main development tasks for quantum portfolio optimizer",
+  "metadata": {
+    "createdAt": "2025-01-14T00:00:00.000Z",
+    "updatedAt": "2025-01-14T00:00:00.000Z"
+  },
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Data ingestion (yfinance + Wikipedia)",
+      "description": "Implement data fetching from Wikipedia for S&P 500 constituents and yfinance for historical prices",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [],
+      "details": "Implement qepo.data.fetch_universe() to scrape Wikipedia constituents. Implement qepo.data.download_prices(tickers, start, end) via yfinance. Save outputs as parquet files in data/interim/.",
+      "testStrategy": "100% unit tests on schema, non-empty outputs, date range compliance. Verify prices.parquet and meta.parquet are created with correct columns.",
+      "subtasks": []
+    },
+    {
+      "id": 2,
+      "title": "Feature and risk model",
+      "description": "Compute daily log returns and rolling covariance matrices for portfolio optimization",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [1],
+      "details": "Implement qepo.features.compute_returns(prices) for daily log returns. Implement qepo.features.compute_covariance(returns, window=252) with optional Ledoit-Wolf shrinkage.",
+      "testStrategy": "Validate returns and covariance matrix shapes. Ensure no NaNs. Test with synthetic data.",
+      "subtasks": []
+    },
+    {
+      "id": 3,
+      "title": "Constraint specification",
+      "description": "Define and validate portfolio constraints using dataclasses",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [],
+      "details": "Use qepo.constraints dataclasses to model: budget sum to 1, cardinality K, weight bounds [w_min, w_max], sector caps, single-name max cap, turnover control.",
+      "testStrategy": "Unit tests for each constraint method with synthetic inputs covering binding and non-binding scenarios.",
+      "subtasks": []
+    },
+    {
+      "id": 4,
+      "title": "QUBO encoder",
+      "description": "Encode portfolio optimization problem as QUBO/Ising model",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [2, 3],
+      "details": "Implement qepo.encoder.build_qubo(objective, constraints, penalties). Objective: maximize return - lambda * risk + penalties. Support binary encoding for K assets and adaptive penalty scaling.",
+      "testStrategy": "Feasibility tests on synthetic problems. Verify QUBO energy aligns with objective trends.",
+      "subtasks": []
+    },
+    {
+      "id": 5,
+      "title": "QAOA solver (simulator-first)",
+      "description": "Implement quantum approximate optimization algorithm using Qiskit Aer simulators",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [4],
+      "details": "Implement qepo.quantum_qaoa.solve_qubo(qubo, config). Support Qiskit Aer backends (statevector, qasm), SPSA optimizer with restarts, configurable depth p in [1..5] and shots. Log all params/metrics/artifacts to MLflow.",
+      "testStrategy": "Unit tests with small synthetic QUBO problems. Verify bitstring candidates returned and MLflow logging.",
+      "subtasks": []
+    },
+    {
+      "id": 6,
+      "title": "IBM Quantum hardware integration (toggle)",
+      "description": "Add support for running on real IBM quantum hardware with safety limits",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [5],
+      "details": "Add config flag to enable hardware runs via config/hardware.yml. Implement 10-minute time guard. Use backend_name from config.",
+      "testStrategy": "Execute single small problem on hardware. Log backend id and version to MLflow.",
+      "subtasks": []
+    },
+    {
+      "id": 7,
+      "title": "Classical baselines",
+      "description": "Implement classical optimization methods for comparison with quantum solver",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [2, 3],
+      "details": "Implement qepo.baselines.mvo_solve() using PyPortfolioOpt/cvxpy with same constraints. Implement qepo.baselines.greedy_k() heuristic. Track runtime and performance metrics.",
+      "testStrategy": "Verify feasible portfolios consistent with constraints. Compare baseline metrics with quantum results.",
+      "subtasks": []
+    },
+    {
+      "id": 8,
+      "title": "Post-process and repair",
+      "description": "Repair near-feasible quantum solutions to satisfy all constraints",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [5],
+      "details": "Implement qepo.postprocess.repair(bitstring, constraints). Re-normalize weights, enforce caps, round portfolio weights.",
+      "testStrategy": "All outputs satisfy constraints. Weight sum within epsilon. Test with various infeasible inputs.",
+      "subtasks": []
+    },
+    {
+      "id": 9,
+      "title": "Backtesting engine",
+      "description": "Walk-forward backtest framework with transaction costs and rebalancing",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [7, 8],
+      "details": "Implement qepo.backtest.walk_forward(config, strategy_fn). Support monthly/weekly rebalance, apply transaction costs and turnover caps. Calculate Sharpe, Sortino, max drawdown, turnover, exposure drift.",
+      "testStrategy": "Verify CSV outputs (backtest_perf.csv, portfolio_alloc.csv, exposures.csv). Validate equity curve and drawdown plots. Confirm MLflow logging.",
+      "subtasks": []
+    },
+    {
+      "id": 10,
+      "title": "Reporting",
+      "description": "Generate comprehensive reports with metrics, charts, and allocations",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [9],
+      "details": "Implement qepo.report.generate(run_id) to create report.md with plots. Include config summary, all metrics, equity curves, drawdown charts, and sector exposure.",
+      "testStrategy": "Verify report.md includes config, metrics, and charts. All allocations present and formatted correctly.",
+      "subtasks": []
+    },
+    {
+      "id": 11,
+      "title": "CLI commands",
+      "description": "Complete CLI implementation for all workflow commands",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [1, 5, 9, 10],
+      "details": "Enhance qepo.cli with full implementations: data ingest, optimize, backtest, report. Each command should load configs, execute pipeline, and log to MLflow.",
+      "testStrategy": "End-to-end path works in fresh environment. All commands print run-id and create expected outputs.",
+      "subtasks": []
+    },
+    {
+      "id": 12,
+      "title": "Tests and CI",
+      "description": "Achieve 85%+ test coverage and set up linting/formatting",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [1, 2, 3, 4, 5, 7, 8, 9, 10, 11],
+      "details": "Complete pytest test suite for all modules. Add black, isort pre-commit hooks. Optional: flake8 linting. Set up basic CI with GitHub Actions to run tests with Aer simulator.",
+      "testStrategy": "85%+ coverage on src/qepo/. All lint checks pass. Sample end-to-end run succeeds in CI.",
+      "subtasks": []
+    }
+  ]
+}
+

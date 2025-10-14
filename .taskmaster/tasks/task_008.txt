@@ -1,0 +1,11 @@
+# Task ID: 8
+# Title: Post-process and repair
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Repair near-feasible quantum solutions to satisfy all constraints
+# Details:
+Implement qepo.postprocess.repair(bitstring, constraints). Re-normalize weights, enforce caps, round portfolio weights.
+
+# Test Strategy:
+All outputs satisfy constraints. Weight sum within epsilon. Test with various infeasible inputs.

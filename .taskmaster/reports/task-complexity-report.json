@@ -1,0 +1,220 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-01-14T00:00:00.000Z",
+  "analysisMethod": "manual",
+  "threshold": 5,
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Data ingestion (yfinance + Wikipedia)",
+      "complexityScore": 6,
+      "reasoning": "Requires web scraping Wikipedia for S&P 500 list, handling yfinance API with rate limits, data validation, schema enforcement for 3 parquet files, error handling for network issues, and dealing with data quality issues.",
+      "recommendedSubtasks": 4,
+      "factors": {
+        "technicalDepth": 6,
+        "integrationComplexity": 7,
+        "testingRequirements": 6,
+        "domainKnowledge": 5,
+        "errorHandling": 7
+      }
+    },
+    {
+      "id": 2,
+      "title": "Feature and risk model",
+      "complexityScore": 7,
+      "reasoning": "Involves financial mathematics (log returns, covariance), numerical stability concerns, optional Ledoit-Wolf shrinkage implementation, handling missing data, and ensuring no NaNs in matrices. Requires understanding of portfolio theory.",
+      "recommendedSubtasks": 5,
+      "factors": {
+        "technicalDepth": 8,
+        "integrationComplexity": 6,
+        "testingRequirements": 7,
+        "domainKnowledge": 8,
+        "errorHandling": 6
+      }
+    },
+    {
+      "id": 3,
+      "title": "Constraint specification",
+      "complexityScore": 5,
+      "reasoning": "Moderate complexity with dataclass design patterns, but relatively straightforward constraint validation logic. Multiple constraint types need proper modeling.",
+      "recommendedSubtasks": 3,
+      "factors": {
+        "technicalDepth": 5,
+        "integrationComplexity": 5,
+        "testingRequirements": 6,
+        "domainKnowledge": 6,
+        "errorHandling": 4
+      }
+    },
+    {
+      "id": 4,
+      "title": "QUBO encoder",
+      "complexityScore": 9,
+      "reasoning": "Highly complex task requiring deep understanding of QUBO formulation, quadratic optimization, binary encoding schemes, adaptive penalty scaling algorithms, and ensuring mathematical correctness. Critical for quantum solver performance.",
+      "recommendedSubtasks": 6,
+      "factors": {
+        "technicalDepth": 10,
+        "integrationComplexity": 8,
+        "testingRequirements": 9,
+        "domainKnowledge": 10,
+        "errorHandling": 7
+      }
+    },
+    {
+      "id": 5,
+      "title": "QAOA solver (simulator-first)",
+      "complexityScore": 10,
+      "reasoning": "Most complex task. Requires quantum computing expertise, Qiskit proficiency, QAOA algorithm implementation, parameter optimization (SPSA/COBYLA), handling multiple backend types, circuit depth tuning, shot noise management, and comprehensive MLflow integration.",
+      "recommendedSubtasks": 7,
+      "factors": {
+        "technicalDepth": 10,
+        "integrationComplexity": 9,
+        "testingRequirements": 9,
+        "domainKnowledge": 10,
+        "errorHandling": 8
+      }
+    },
+    {
+      "id": 6,
+      "title": "IBM Quantum hardware integration (toggle)",
+      "complexityScore": 7,
+      "reasoning": "Involves real quantum hardware API integration, time limit enforcement, backend selection logic, transpilation optimization, and handling hardware-specific constraints and failures.",
+      "recommendedSubtasks": 4,
+      "factors": {
+        "technicalDepth": 7,
+        "integrationComplexity": 8,
+        "testingRequirements": 6,
+        "domainKnowledge": 7,
+        "errorHandling": 8
+      }
+    },
+    {
+      "id": 7,
+      "title": "Classical baselines",
+      "complexityScore": 6,
+      "reasoning": "Requires understanding of mean-variance optimization, cvxpy solver usage, constraint translation from quantum to classical formulation, and greedy heuristic implementation. Performance benchmarking needed.",
+      "recommendedSubtasks": 4,
+      "factors": {
+        "technicalDepth": 7,
+        "integrationComplexity": 6,
+        "testingRequirements": 6,
+        "domainKnowledge": 7,
+        "errorHandling": 5
+      }
+    },
+    {
+      "id": 8,
+      "title": "Post-process and repair",
+      "complexityScore": 6,
+      "reasoning": "Moderately complex with bitstring decoding, feasibility checking, constraint repair algorithms, weight normalization, and rounding strategies while maintaining optimality.",
+      "recommendedSubtasks": 4,
+      "factors": {
+        "technicalDepth": 6,
+        "integrationComplexity": 6,
+        "testingRequirements": 7,
+        "domainKnowledge": 6,
+        "errorHandling": 6
+      }
+    },
+    {
+      "id": 9,
+      "title": "Backtesting engine",
+      "complexityScore": 8,
+      "reasoning": "Complex walk-forward validation framework, transaction cost modeling, rebalancing logic, multiple performance metrics (Sharpe, Sortino, drawdown), and ensuring statistical validity. Critical for validation.",
+      "recommendedSubtasks": 6,
+      "factors": {
+        "technicalDepth": 8,
+        "integrationComplexity": 7,
+        "testingRequirements": 8,
+        "domainKnowledge": 8,
+        "errorHandling": 7
+      }
+    },
+    {
+      "id": 10,
+      "title": "Reporting",
+      "complexityScore": 5,
+      "reasoning": "Moderate complexity with visualization requirements, markdown report generation, chart creation, and data aggregation. Mostly integration and formatting work.",
+      "recommendedSubtasks": 3,
+      "factors": {
+        "technicalDepth": 4,
+        "integrationComplexity": 6,
+        "testingRequirements": 5,
+        "domainKnowledge": 4,
+        "errorHandling": 4
+      }
+    },
+    {
+      "id": 11,
+      "title": "CLI commands",
+      "complexityScore": 6,
+      "reasoning": "Requires integration of all components, config loading, pipeline orchestration, error handling, and MLflow tracking. Glue code complexity.",
+      "recommendedSubtasks": 4,
+      "factors": {
+        "technicalDepth": 5,
+        "integrationComplexity": 8,
+        "testingRequirements": 6,
+        "domainKnowledge": 5,
+        "errorHandling": 7
+      }
+    },
+    {
+      "id": 12,
+      "title": "Tests and CI",
+      "complexityScore": 7,
+      "reasoning": "Comprehensive test coverage across all modules, CI/CD pipeline setup, test data generation, mocking quantum backends, and ensuring reproducibility. Coverage target of 85%+ is demanding.",
+      "recommendedSubtasks": 5,
+      "factors": {
+        "technicalDepth": 6,
+        "integrationComplexity": 7,
+        "testingRequirements": 10,
+        "domainKnowledge": 6,
+        "errorHandling": 6
+      }
+    }
+  ],
+  "summary": {
+    "totalTasks": 12,
+    "averageComplexity": 6.8,
+    "highComplexityTasks": 7,
+    "recommendedForExpansion": [
+      {
+        "id": 5,
+        "title": "QAOA solver (simulator-first)",
+        "score": 10,
+        "subtasks": 7
+      },
+      {
+        "id": 4,
+        "title": "QUBO encoder",
+        "score": 9,
+        "subtasks": 6
+      },
+      {
+        "id": 9,
+        "title": "Backtesting engine",
+        "score": 8,
+        "subtasks": 6
+      },
+      {
+        "id": 2,
+        "title": "Feature and risk model",
+        "score": 7,
+        "subtasks": 5
+      },
+      {
+        "id": 6,
+        "title": "IBM Quantum hardware integration (toggle)",
+        "score": 7,
+        "subtasks": 4
+      },
+      {
+        "id": 12,
+        "title": "Tests and CI",
+        "score": 7,
+        "subtasks": 5
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: QAOA solver (simulator-first)
+# Status: pending
+# Dependencies: 4
+# Priority: high
+# Description: Implement quantum approximate optimization algorithm using Qiskit Aer simulators
+# Details:
+Implement qepo.quantum_qaoa.solve_qubo(qubo, config). Support Qiskit Aer backends (statevector, qasm), SPSA optimizer with restarts, configurable depth p in [1..5] and shots. Log all params/metrics/artifacts to MLflow.
+
+# Test Strategy:
+Unit tests with small synthetic QUBO problems. Verify bitstring candidates returned and MLflow logging.

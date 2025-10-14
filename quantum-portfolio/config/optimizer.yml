@@ -1,0 +1,22 @@
+objective:
+  risk_aversion: 0.5
+  transaction_cost_bps: 5
+constraints:
+  cardinality_k: 25
+  weight_bounds: [0.0, 0.1]
+  sector_caps: {"TECH": 0.35, "FIN": 0.25}
+  no_short: true
+qubo:
+  penalty_mode: "adaptive"
+  encoding: "binary_select"
+solver:
+  type: "qaoa"
+  backend: "aer_qasm"
+  shots: 4096
+  p_depth: 3
+  optimizer: "SPSA"
+  restarts: 3
+hardware:
+  use_ibm: false
+  backend_name: null
+seed: 42

@@ -1,0 +1,11 @@
+# Task ID: 11
+# Title: CLI commands
+# Status: pending
+# Dependencies: 1, 5, 9, 10
+# Priority: high
+# Description: Complete CLI implementation for all workflow commands
+# Details:
+Enhance qepo.cli with full implementations: data ingest, optimize, backtest, report. Each command should load configs, execute pipeline, and log to MLflow.
+
+# Test Strategy:
+End-to-end path works in fresh environment. All commands print run-id and create expected outputs.

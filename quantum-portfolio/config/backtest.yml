@@ -1,0 +1,8 @@
+rebalance: "monthly"
+costs_bps: 5
+window:
+  train_months: 36
+  test_months: 12
+rolling: true
+benchmarks: ["mvo", "greedy_k"]
+metrics: ["sharpe", "sortino", "max_drawdown", "turnover"]

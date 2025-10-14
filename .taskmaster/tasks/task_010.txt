@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Reporting
+# Status: pending
+# Dependencies: 9
+# Priority: medium
+# Description: Generate comprehensive reports with metrics, charts, and allocations
+# Details:
+Implement qepo.report.generate(run_id) to create report.md with plots. Include config summary, all metrics, equity curves, drawdown charts, and sector exposure.
+
+# Test Strategy:
+Verify report.md includes config, metrics, and charts. All allocations present and formatted correctly.

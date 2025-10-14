@@ -1,0 +1,1 @@
+Implement `qepo/quantum_qaoa.py` with `solve_qubo(qubo, config)` using Qiskit Aer. Support p-depth, shots, SPSA optimizer, restarts. Log params/metrics/artifacts to MLflow. Return best bitstring and energy. Write unit tests in `tests/test_quantum_qaoa.py` with synthetic QUBO. Follow `.cursorrules`.

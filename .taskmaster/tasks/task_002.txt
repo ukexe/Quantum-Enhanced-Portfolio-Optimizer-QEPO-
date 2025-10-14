@@ -1,0 +1,11 @@
+# Task ID: 2
+# Title: Feature and risk model
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Compute daily log returns and rolling covariance matrices for portfolio optimization
+# Details:
+Implement qepo.features.compute_returns(prices) for daily log returns. Implement qepo.features.compute_covariance(returns, window=252) with optional Ledoit-Wolf shrinkage.
+
+# Test Strategy:
+Validate returns and covariance matrix shapes. Ensure no NaNs. Test with synthetic data.

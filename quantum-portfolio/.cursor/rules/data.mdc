@@ -1,0 +1,12 @@
+---
+description: Data ingestion and caching rules
+globs: src/qepo/data.py, data/**
+alwaysApply: true
+---
+
+- **Sources allowed**: yfinance, Kaggle, FRED
+- **Caching**: Save parquet to `data/interim/`
+- **Schemas**:
+  - prices.parquet: date, ticker, adj_close
+  - returns.parquet: date, ticker, ret_d
+  - meta.parquet: ticker, sector, industry, included_from, included_to

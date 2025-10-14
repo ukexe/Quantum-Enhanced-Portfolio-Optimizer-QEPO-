@@ -1,0 +1,54 @@
+language: python
+version: ">=3.11"
+
+style:
+  - pep8
+  - black
+  - isort
+  - docstrings: numpy
+
+testing:
+  runner: pytest
+  coverage:
+    min_percent: 85
+    paths:
+      - src/qepo
+
+data_ethics:
+  allowed_sources:
+    - yfinance
+    - kaggle
+    - fred
+
+quantum_policy:
+  prefer: simulators
+  hardware_toggle: config/hardware.yml
+
+logging:
+  format: json
+  library: logging
+
+cli:
+  framework: typer
+
+config:
+  format: yaml
+  validator: pydantic-settings
+
+mlops:
+  required: mlflow
+  rules:
+    - always_wrap_runs: true
+    - log_params_metrics_artifacts: true
+
+comments:
+  anchors:
+    - "Cursor Task:"
+
+security:
+  secrets_in_code: false
+  env_file: .env
+
+notes:
+  - Keep hardware runs behind explicit config flag.
+  - No scraping of prohibited sites.

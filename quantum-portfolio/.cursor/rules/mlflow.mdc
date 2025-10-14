@@ -1,0 +1,12 @@
+---
+description: MLflow required tags and artifacts
+globs: src/qepo/**/*.py
+alwaysApply: true
+---
+
+- **Required tags**: `solver_type`, `p_depth`, `penalty_mode`, `universe_size`, `seed`
+- **Required artifacts**:
+  - portfolio.csv
+  - backtest.csv
+  - config.yml
+  - logs.json

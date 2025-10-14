@@ -1,0 +1,11 @@
+# Task ID: 1
+# Title: Data ingestion (yfinance + Wikipedia)
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Implement data fetching from Wikipedia for S&P 500 constituents and yfinance for historical prices
+# Details:
+Implement qepo.data.fetch_universe() to scrape Wikipedia constituents. Implement qepo.data.download_prices(tickers, start, end) via yfinance. Save outputs as parquet files in data/interim/.
+
+# Test Strategy:
+100% unit tests on schema, non-empty outputs, date range compliance. Verify prices.parquet and meta.parquet are created with correct columns.

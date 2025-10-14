@@ -1,0 +1,11 @@
+# Task ID: 9
+# Title: Backtesting engine
+# Status: pending
+# Dependencies: 7, 8
+# Priority: high
+# Description: Walk-forward backtest framework with transaction costs and rebalancing
+# Details:
+Implement qepo.backtest.walk_forward(config, strategy_fn). Support monthly/weekly rebalance, apply transaction costs and turnover caps. Calculate Sharpe, Sortino, max drawdown, turnover, exposure drift.
+
+# Test Strategy:
+Verify CSV outputs (backtest_perf.csv, portfolio_alloc.csv, exposures.csv). Validate equity curve and drawdown plots. Confirm MLflow logging.

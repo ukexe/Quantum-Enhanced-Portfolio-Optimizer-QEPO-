@@ -1,0 +1,6 @@
+ibm:
+  enabled: true
+  backend: "ibm_osaka"
+  max_minutes: 10
+  transpile_optimization_level: 3
+  noise_model: false

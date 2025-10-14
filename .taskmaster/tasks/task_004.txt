@@ -1,0 +1,11 @@
+# Task ID: 4
+# Title: QUBO encoder
+# Status: pending
+# Dependencies: 2, 3
+# Priority: high
+# Description: Encode portfolio optimization problem as QUBO/Ising model
+# Details:
+Implement qepo.encoder.build_qubo(objective, constraints, penalties). Objective: maximize return - lambda * risk + penalties. Support binary encoding for K assets and adaptive penalty scaling.
+
+# Test Strategy:
+Feasibility tests on synthetic problems. Verify QUBO energy aligns with objective trends.

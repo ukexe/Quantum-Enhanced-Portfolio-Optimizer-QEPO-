@@ -1,0 +1,11 @@
+# Task ID: 3
+# Title: Constraint specification
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Define and validate portfolio constraints using dataclasses
+# Details:
+Use qepo.constraints dataclasses to model: budget sum to 1, cardinality K, weight bounds [w_min, w_max], sector caps, single-name max cap, turnover control.
+
+# Test Strategy:
+Unit tests for each constraint method with synthetic inputs covering binding and non-binding scenarios.

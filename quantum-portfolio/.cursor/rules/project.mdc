@@ -1,0 +1,12 @@
+---
+description: Project conventions and constraints for QEPO
+globs: src/qepo/**/*.py, config/**/*.yml
+alwaysApply: true
+---
+
+- **Python version**: 3.11+
+- **Formatting**: black (100 cols), isort (black profile)
+- **Docstrings**: NumPy style for public APIs
+- **Logging**: JSON via `qepo.utils.configure_logging`
+- **Configs**: YAML files validated via pydantic/settings (future)
+- **Quantum policy**: Prefer simulators; hardware only via `config/hardware.yml`

@@ -1,0 +1,789 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Data ingestion (yfinance + Wikipedia)",
+        "description": "Implement data fetching from Wikipedia for S&P 500 constituents and yfinance for historical prices",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Implement qepo.data.fetch_universe() to scrape Wikipedia constituents. Implement qepo.data.download_prices(tickers, start, end) via yfinance. Save outputs as parquet files in data/interim/.",
+        "testStrategy": "100% unit tests on schema, non-empty outputs, date range compliance. Verify prices.parquet and meta.parquet are created with correct columns.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Scrape S&P 500 constituents from Wikipedia",
+            "description": "Implement fetch_universe() to scrape Wikipedia table",
+            "details": "Parse Wikipedia S&P 500 companies table, extract ticker symbols, sector, industry. Handle table structure changes. Return list of ticker symbols.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:44:32.599Z"
+          },
+          {
+            "id": 2,
+            "title": "Download historical prices via yfinance",
+            "description": "Implement download_prices() with rate limiting and retries",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:44:46.392Z"
+          },
+          {
+            "id": 3,
+            "title": "Validate and save parquet files",
+            "description": "Create prices.parquet, returns.parquet, meta.parquet with proper schema",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:45:00.044Z"
+          },
+          {
+            "id": 4,
+            "title": "Write unit tests for data ingestion",
+            "description": "Test schema validation, date ranges, error handling",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:45:13.754Z"
+          }
+        ],
+        "updatedAt": "2025-10-14T13:45:13.754Z"
+      },
+      {
+        "id": 2,
+        "title": "Feature and risk model",
+        "description": "Compute daily log returns and rolling covariance matrices for portfolio optimization",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "details": "Implement qepo.features.compute_returns(prices) for daily log returns. Implement qepo.features.compute_covariance(returns, window=252) with optional Ledoit-Wolf shrinkage.",
+        "testStrategy": "Validate returns and covariance matrix shapes. Ensure no NaNs. Test with synthetic data.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement log returns calculation",
+            "description": "Create compute_returns() function for daily log returns",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:58:49.024Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement covariance matrix computation",
+            "description": "Rolling covariance with configurable window, handle missing data",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:59:01.484Z"
+          },
+          {
+            "id": 3,
+            "title": "Add Ledoit-Wolf shrinkage",
+            "description": "Optional shrinkage estimation for covariance matrix",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:59:14.359Z"
+          },
+          {
+            "id": 4,
+            "title": "Validate numerical stability",
+            "description": "Ensure no NaNs, check matrix properties, handle edge cases",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:59:28.487Z"
+          },
+          {
+            "id": 5,
+            "title": "Write unit tests for features",
+            "description": "Test with synthetic data, validate shapes and values",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T13:59:43.872Z"
+          }
+        ],
+        "updatedAt": "2025-10-14T13:59:43.872Z"
+      },
+      {
+        "id": 3,
+        "title": "Constraint specification",
+        "description": "Define and validate portfolio constraints using dataclasses",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Use qepo.constraints dataclasses to model: budget sum to 1, cardinality K, weight bounds [w_min, w_max], sector caps, single-name max cap, turnover control.",
+        "testStrategy": "Unit tests for each constraint method with synthetic inputs covering binding and non-binding scenarios.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design constraint dataclasses",
+            "description": "Create dataclass models for all constraint types",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 3,
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement constraint validation",
+            "description": "Budget, cardinality, bounds, sector caps validation logic",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 3,
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Write constraint unit tests",
+            "description": "Test binding and non-binding scenarios for each constraint",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 3,
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2025-10-14T13:52:43.353Z"
+      },
+      {
+        "id": 4,
+        "title": "QUBO encoder",
+        "description": "Encode portfolio optimization problem as QUBO/Ising model",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          "2",
+          "3"
+        ],
+        "details": "Implement qepo.encoder.build_qubo(objective, constraints, penalties). Objective: maximize return - lambda * risk + penalties. Support binary encoding for K assets and adaptive penalty scaling.",
+        "testStrategy": "Feasibility tests on synthetic problems. Verify QUBO energy aligns with objective trends.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design QUBO objective function",
+            "description": "Formulate return - lambda*risk objective as quadratic form",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:03:59.504Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement binary encoding scheme",
+            "description": "Binary variables for K-asset selection",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:04:13.126Z"
+          },
+          {
+            "id": 3,
+            "title": "Add constraint penalties",
+            "description": "Quadratic penalties for budget, cardinality, bounds, sectors",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:04:26.698Z"
+          },
+          {
+            "id": 4,
+            "title": "Implement adaptive penalty scaling",
+            "description": "Auto-scaling algorithm for penalty coefficients",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:04:40.217Z"
+          },
+          {
+            "id": 5,
+            "title": "Validate QUBO energy calculation",
+            "description": "Ensure energy aligns with portfolio objective",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:04:53.520Z"
+          },
+          {
+            "id": 6,
+            "title": "Write QUBO encoder tests",
+            "description": "Test with synthetic problems, verify feasibility",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:05:06.348Z"
+          }
+        ],
+        "updatedAt": "2025-10-14T14:05:06.348Z"
+      },
+      {
+        "id": 5,
+        "title": "QAOA solver (simulator-first)",
+        "description": "Implement quantum approximate optimization algorithm using Qiskit Aer simulators",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          "4"
+        ],
+        "details": "Implement qepo.quantum_qaoa.solve_qubo(qubo, config). Support Qiskit Aer backends (statevector, qasm), SPSA optimizer with restarts, configurable depth p in [1..5] and shots. Log all params/metrics/artifacts to MLflow.",
+        "testStrategy": "Unit tests with small synthetic QUBO problems. Verify bitstring candidates returned and MLflow logging.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Qiskit Aer backends",
+            "description": "Configure statevector and qasm simulators",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:17:36.297Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement QAOA circuit construction",
+            "description": "Build parameterized QAOA circuit with configurable depth",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:17:49.807Z"
+          },
+          {
+            "id": 3,
+            "title": "Add SPSA optimizer integration",
+            "description": "Parameter optimization with restarts and tuning",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:18:02.993Z"
+          },
+          {
+            "id": 4,
+            "title": "Implement shot noise handling",
+            "description": "Configurable shots, result aggregation",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:18:16.255Z"
+          },
+          {
+            "id": 5,
+            "title": "Add MLflow logging",
+            "description": "Log all params, metrics, bitstrings, energies",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:18:30.528Z"
+          },
+          {
+            "id": 6,
+            "title": "Decode and rank solutions",
+            "description": "Extract top bitstring candidates from quantum results",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:18:44.641Z"
+          },
+          {
+            "id": 7,
+            "title": "Write QAOA unit tests",
+            "description": "Test with small synthetic QUBO problems",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:19:00.331Z"
+          }
+        ],
+        "updatedAt": "2025-10-14T14:19:00.331Z"
+      },
+      {
+        "id": 6,
+        "title": "IBM Quantum hardware integration (toggle)",
+        "description": "Add support for running on real IBM quantum hardware with safety limits",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          "5"
+        ],
+        "details": "Add config flag to enable hardware runs via config/hardware.yml. Implement 10-minute time guard. Use backend_name from config.",
+        "testStrategy": "Execute single small problem on hardware. Log backend id and version to MLflow.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement hardware backend selector",
+            "description": "Read backend_name from config, connect to IBM Quantum",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:32:47.461Z"
+          },
+          {
+            "id": 2,
+            "title": "Add 10-minute time guard",
+            "description": "Monitor and enforce time limit for free tier",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:33:19.434Z"
+          },
+          {
+            "id": 3,
+            "title": "Implement circuit transpilation",
+            "description": "Optimize circuits for hardware topology",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:33:59.676Z"
+          },
+          {
+            "id": 4,
+            "title": "Test hardware execution",
+            "description": "Run small problem on real hardware, log backend info",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:36:20.135Z"
+          }
+        ],
+        "updatedAt": "2025-10-14T14:36:20.135Z"
+      },
+      {
+        "id": 7,
+        "title": "Classical baselines",
+        "description": "Implement classical optimization methods for comparison with quantum solver",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          "2",
+          "3"
+        ],
+        "details": "Implement qepo.baselines.mvo_solve() using PyPortfolioOpt/cvxpy with same constraints. Implement qepo.baselines.greedy_k() heuristic. Track runtime and performance metrics.",
+        "testStrategy": "Verify feasible portfolios consistent with constraints. Compare baseline metrics with quantum results.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement MVO solver",
+            "description": "Mean-variance optimization using PyPortfolioOpt/cvxpy",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 7,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:24:51.790Z"
+          },
+          {
+            "id": 2,
+            "title": "Translate constraints to classical",
+            "description": "Map QUBO constraints to cvxpy constraints",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 7,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:25:06.701Z"
+          },
+          {
+            "id": 3,
+            "title": "Implement greedy K-select heuristic",
+            "description": "Simple greedy baseline for comparison",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 7,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:25:20.742Z"
+          },
+          {
+            "id": 4,
+            "title": "Add performance tracking",
+            "description": "Runtime metrics, solution quality logging",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 7,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:25:35.511Z"
+          }
+        ],
+        "updatedAt": "2025-10-14T14:25:35.511Z"
+      },
+      {
+        "id": 8,
+        "title": "Post-process and repair",
+        "description": "Repair near-feasible quantum solutions to satisfy all constraints",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          "5"
+        ],
+        "details": "Implement qepo.postprocess.repair(bitstring, constraints). Re-normalize weights, enforce caps, round portfolio weights.",
+        "testStrategy": "All outputs satisfy constraints. Weight sum within epsilon. Test with various infeasible inputs.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement bitstring decoder",
+            "description": "Convert quantum bitstring to portfolio weights",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:39:18.072Z"
+          },
+          {
+            "id": 2,
+            "title": "Add feasibility checker",
+            "description": "Verify all constraints are satisfied",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:40:05.675Z"
+          },
+          {
+            "id": 3,
+            "title": "Implement repair algorithm",
+            "description": "Fix near-feasible solutions, re-normalize weights",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:40:38.401Z"
+          },
+          {
+            "id": 4,
+            "title": "Write post-processing tests",
+            "description": "Test with various infeasible inputs",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8,
+            "parentId": "undefined",
+            "updatedAt": "2025-10-14T14:40:53.270Z"
+          }
+        ],
+        "updatedAt": "2025-10-14T14:40:53.270Z"
+      },
+      {
+        "id": 9,
+        "title": "Backtesting engine",
+        "description": "Walk-forward backtest framework with transaction costs and rebalancing",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          "7",
+          "8"
+        ],
+        "details": "Implement qepo.backtest.walk_forward(config, strategy_fn). Support monthly/weekly rebalance, apply transaction costs and turnover caps. Calculate Sharpe, Sortino, max drawdown, turnover, exposure drift.",
+        "testStrategy": "Verify CSV outputs (backtest_perf.csv, portfolio_alloc.csv, exposures.csv). Validate equity curve and drawdown plots. Confirm MLflow logging.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement walk-forward framework",
+            "description": "Train/test split with rolling window",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9,
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Add rebalancing logic",
+            "description": "Monthly/weekly rebalance with transaction costs",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9,
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Calculate performance metrics",
+            "description": "Sharpe, Sortino, max drawdown, turnover",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9,
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Generate CSV outputs",
+            "description": "backtest_perf.csv, portfolio_alloc.csv, exposures.csv",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9,
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create equity curve plots",
+            "description": "Visualization of performance and drawdown",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9,
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Write backtest tests",
+            "description": "Validate metrics with sample returns",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9,
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Reporting",
+        "description": "Generate comprehensive reports with metrics, charts, and allocations",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          "9"
+        ],
+        "details": "Implement qepo.report.generate(run_id) to create report.md with plots. Include config summary, all metrics, equity curves, drawdown charts, and sector exposure.",
+        "testStrategy": "Verify report.md includes config, metrics, and charts. All allocations present and formatted correctly.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement report generator",
+            "description": "Create report.md with config summary and metrics",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 10,
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Add chart generation",
+            "description": "Equity curves, drawdown, sector exposure plots",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 10,
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Format allocation tables",
+            "description": "Readable portfolio weight tables",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 10,
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "CLI commands",
+        "description": "Complete CLI implementation for all workflow commands",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          "1",
+          "5",
+          "9",
+          "10"
+        ],
+        "details": "Enhance qepo.cli with full implementations: data ingest, optimize, backtest, report. Each command should load configs, execute pipeline, and log to MLflow.",
+        "testStrategy": "End-to-end path works in fresh environment. All commands print run-id and create expected outputs.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement data ingest command",
+            "description": "Full data pipeline with config loading",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11,
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement optimize command",
+            "description": "Run QAOA solver with MLflow tracking",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11,
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement backtest command",
+            "description": "Execute backtesting framework",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11,
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement report command",
+            "description": "Generate report from MLflow run ID",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11,
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Tests and CI",
+        "description": "Achieve 85%+ test coverage and set up linting/formatting",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11"
+        ],
+        "details": "Complete pytest test suite for all modules. Add black, isort pre-commit hooks. Optional: flake8 linting. Set up basic CI with GitHub Actions to run tests with Aer simulator.",
+        "testStrategy": "85%+ coverage on src/qepo/. All lint checks pass. Sample end-to-end run succeeds in CI.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Complete test suite",
+            "description": "Achieve 85%+ coverage on all modules",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 12,
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Set up pre-commit hooks",
+            "description": "black, isort, optional flake8",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 12,
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Configure GitHub Actions CI",
+            "description": "Run tests with Aer simulator on push",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 12,
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add integration tests",
+            "description": "End-to-end workflow tests",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 12,
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Document test coverage",
+            "description": "Generate and publish coverage reports",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 12,
+            "parentId": "undefined"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2025-10-14T14:40:53.281Z",
+      "taskCount": 12,
+      "completedCount": 7,
+      "tags": [
+        "master"
+      ],
+      "created": "2025-10-14T14:49:15.908Z",
+      "description": "Tasks for master context",
+      "updated": "2025-10-14T16:36:52.072Z"
+    }
+  }
+}

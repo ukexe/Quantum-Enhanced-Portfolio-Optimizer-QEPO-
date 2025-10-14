@@ -1,0 +1,12 @@
+universe:
+  source: ["wikipedia", "kaggle"]
+  tickers: null
+history:
+  start: "2018-01-01"
+  end: "2025-01-01"
+risk_free:
+  source: "fred"
+  series: "DTB3"
+cache:
+  enable: true
+  path: "data/interim"

@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Classical baselines
+# Status: pending
+# Dependencies: 2, 3
+# Priority: high
+# Description: Implement classical optimization methods for comparison with quantum solver
+# Details:
+Implement qepo.baselines.mvo_solve() using PyPortfolioOpt/cvxpy with same constraints. Implement qepo.baselines.greedy_k() heuristic. Track runtime and performance metrics.
+
+# Test Strategy:
+Verify feasible portfolios consistent with constraints. Compare baseline metrics with quantum results.

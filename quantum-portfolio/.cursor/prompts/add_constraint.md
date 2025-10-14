@@ -1,0 +1,1 @@
+Add sector cap constraints to `qepo/constraints.py`. Update encoder to include quadratic penalties. Provide unit tests covering binding and non-binding scenarios. Update `config/optimizer.yml` docstrings.

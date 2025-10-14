@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Tests and CI
+# Status: pending
+# Dependencies: 1, 2, 3, 4, 5, 7, 8, 9, 10, 11
+# Priority: medium
+# Description: Achieve 85%+ test coverage and set up linting/formatting
+# Details:
+Complete pytest test suite for all modules. Add black, isort pre-commit hooks. Optional: flake8 linting. Set up basic CI with GitHub Actions to run tests with Aer simulator.
+
+# Test Strategy:
+85%+ coverage on src/qepo/. All lint checks pass. Sample end-to-end run succeeds in CI.

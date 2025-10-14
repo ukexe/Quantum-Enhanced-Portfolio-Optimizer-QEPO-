@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: IBM Quantum hardware integration (toggle)
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Add support for running on real IBM quantum hardware with safety limits
+# Details:
+Add config flag to enable hardware runs via config/hardware.yml. Implement 10-minute time guard. Use backend_name from config.
+
+# Test Strategy:
+Execute single small problem on hardware. Log backend id and version to MLflow.

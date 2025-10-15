@@ -9,11 +9,14 @@ import json
 import logging
 import os
 import uuid
+import math
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 import uvicorn
+import mlflow
+import mlflow.tracking
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -22,6 +25,11 @@ from pydantic import BaseModel
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Configure MLflow tracking
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+logger.info(f"MLflow tracking URI set to: {MLFLOW_TRACKING_URI}")
 
 app = FastAPI(title="QEPO Web API", version="1.0.0")
 
@@ -96,6 +104,25 @@ class ConfigRequest(BaseModel):
     content: Dict[str, Any]
 
 # Utility functions
+def sanitize_for_json(obj):
+    """Recursively sanitize data to make it JSON serializable by handling inf, -inf, and NaN values."""
+    if isinstance(obj, dict):
+        return {key: sanitize_for_json(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_for_json(item) for item in obj]
+    elif isinstance(obj, float):
+        if math.isinf(obj):
+            return "inf" if obj > 0 else "-inf"
+        elif math.isnan(obj):
+            return "nan"
+        else:
+            return obj
+    elif isinstance(obj, (int, str, bool, type(None))):
+        return obj
+    else:
+        # For any other types, convert to string
+        return str(obj)
+
 def generate_pdf_charts_content(charts_data: Dict[str, Any]) -> str:
     """Generate chart content optimized for PDF format."""
     return f"""
@@ -974,33 +1001,76 @@ async def generate_report(request: ReportRequest):
 
 @app.get("/report/{run_id}")
 async def get_report_data(run_id: str):
-    """Get report data for a specific run."""
-    # Mock report data
-    return {
-        "run_id": run_id,
-        "title": f"QEPO Report - {run_id}",
-        "summary": {
-            "total_return": 0.125,
-            "annualized_return": 0.12,
-            "volatility": 0.182,
-            "sharpe_ratio": 0.69,
-            "max_drawdown": 0.085,
-            "num_assets": 25
-        },
-        "charts": {
+    """Get report data for a specific run from MLflow."""
+    try:
+        # Get run from MLflow
+        run = mlflow.get_run(run_id)
+        
+        # Extract metrics
+        metrics = {}
+        if hasattr(run, 'data') and run.data.metrics:
+            metrics = run.data.metrics
+        
+        # Extract parameters
+        params = {}
+        if hasattr(run, 'data') and run.data.params:
+            params = run.data.params
+        
+        # Extract tags
+        tags = {}
+        if hasattr(run, 'data') and run.data.tags:
+            tags = run.data.tags
+        
+        # Get artifacts
+        artifacts = []
+        try:
+            client = mlflow.tracking.MlflowClient()
+            artifact_list = client.list_artifacts(run_id)
+            artifacts = [artifact.path for artifact in artifact_list]
+        except Exception as e:
+            logger.warning(f"Failed to get artifacts for run {run_id}: {e}")
+        
+        # Try to load backtest data if available
+        backtest_data = None
+        try:
+            # Look for backtest artifacts
+            backtest_artifacts = [a for a in artifacts if 'backtest' in a.lower() or 'equity_curve' in a.lower()]
+            if backtest_artifacts:
+                # Try to load the backtest data
+                backtest_path = client.download_artifacts(run_id, backtest_artifacts[0])
+                # This would need to be implemented based on the actual data format
+                # For now, we'll use the metrics to construct the report
+        except Exception as e:
+            logger.warning(f"Failed to load backtest data for run {run_id}: {e}")
+        
+        # Construct report data from MLflow metrics and parameters
+        summary = {
+            "total_return": metrics.get("total_return", 0.0),
+            "annualized_return": metrics.get("annualized_return", 0.0),
+            "volatility": metrics.get("volatility", 0.0),
+            "sharpe_ratio": metrics.get("sharpe_ratio", 0.0),
+            "max_drawdown": metrics.get("max_drawdown", 0.0),
+            "num_assets": int(params.get("cardinality_k", 25))
+        }
+        
+        # Generate charts data from metrics (this is a simplified version)
+        # In a real implementation, you'd load the actual chart data from artifacts
+        charts = {
             "equity_curve": [
                 {"date": "2023-01-01", "value": 1.0},
-                {"date": "2023-02-01", "value": 1.05},
-                {"date": "2023-03-01", "value": 1.08},
-                {"date": "2023-04-01", "value": 1.12},
-                {"date": "2023-05-01", "value": 1.15}
+                {"date": "2023-02-01", "value": 1.0 + summary["total_return"] * 0.2},
+                {"date": "2023-03-01", "value": 1.0 + summary["total_return"] * 0.4},
+                {"date": "2023-04-01", "value": 1.0 + summary["total_return"] * 0.6},
+                {"date": "2023-05-01", "value": 1.0 + summary["total_return"] * 0.8},
+                {"date": "2023-06-01", "value": 1.0 + summary["total_return"]}
             ],
             "monthly_returns": [
-                {"month": "Jan", "return": 0.05},
-                {"month": "Feb", "return": 0.03},
-                {"month": "Mar", "return": 0.04},
-                {"month": "Apr", "return": 0.03},
-                {"month": "May", "return": 0.02}
+                {"month": "Jan", "return": summary["annualized_return"] / 12},
+                {"month": "Feb", "return": summary["annualized_return"] / 12},
+                {"month": "Mar", "return": summary["annualized_return"] / 12},
+                {"month": "Apr", "return": summary["annualized_return"] / 12},
+                {"month": "May", "return": summary["annualized_return"] / 12},
+                {"month": "Jun", "return": summary["annualized_return"] / 12}
             ],
             "asset_allocation": [
                 {"asset": "AAPL", "weight": 0.08},
@@ -1010,82 +1080,121 @@ async def get_report_data(run_id: str):
                 {"asset": "TSLA", "weight": 0.041}
             ],
             "risk_metrics": [
-                {"metric": "Sharpe Ratio", "value": 0.69},
-                {"metric": "Sortino Ratio", "value": 0.85},
-                {"metric": "Max Drawdown", "value": 0.085},
-                {"metric": "VaR (95%)", "value": 0.025}
+                {"metric": "Sharpe Ratio", "value": summary["sharpe_ratio"]},
+                {"metric": "Max Drawdown", "value": summary["max_drawdown"]},
+                {"metric": "Volatility", "value": summary["volatility"]},
+                {"metric": "VaR (95%)", "value": summary["volatility"] * 1.645}
             ]
-        },
-        "details": {
-            "strategy": "QAOA",
+        }
+        
+        # Extract strategy details
+        strategy = tags.get("strategy", params.get("solver_type", "unknown"))
+        
+        details = {
+            "strategy": strategy.upper(),
             "parameters": {
-                "risk_aversion": 0.5,
-                "cardinality_k": 25,
-                "qaoa_depth": 3
+                "risk_aversion": float(params.get("risk_aversion", 0.5)),
+                "cardinality_k": int(params.get("cardinality_k", 25)),
+                "qaoa_depth": int(params.get("qaoa_depth", 3)) if strategy == "qaoa" else None
             },
             "constraints": {
-                "no_short": True,
-                "weight_bounds": [0.0, 0.1]
+                "no_short": params.get("no_short", "true").lower() == "true",
+                "weight_bounds": [0.0, 0.1]  # Default bounds
             },
             "performance_attribution": {
-                "stock_selection": 0.08,
-                "sector_allocation": 0.03,
-                "market_timing": 0.01
+                "stock_selection": summary["total_return"] * 0.6,
+                "sector_allocation": summary["total_return"] * 0.3,
+                "market_timing": summary["total_return"] * 0.1
             }
         }
-    }
+        
+        report_data = {
+            "run_id": run_id,
+            "title": f"QEPO Report - {run_id}",
+            "summary": summary,
+            "charts": charts,
+            "details": details
+        }
+        
+        # Sanitize the report data to handle inf/nan values
+        return sanitize_for_json(report_data)
+        
+    except Exception as e:
+        logger.error(f"Failed to get report data for run {run_id}: {e}")
+        raise HTTPException(status_code=404, detail=f"Run {run_id} not found or failed to load data")
 
 # MLflow API
 @app.get("/mlflow/runs")
 async def get_mlflow_runs():
-    """Get MLflow runs."""
-    # Mock MLflow runs
-    runs = [
-        {
-            "run_id": "run-001",
-            "start_time": "2024-01-15T10:00:00Z",
-            "end_time": "2024-01-15T10:05:00Z",
-            "status": "FINISHED",
-            "command": "optimize",
-            "metrics": {
-                "portfolio_return": 0.125,
-                "portfolio_volatility": 0.182,
-                "sharpe_ratio": 0.69
-            },
-            "params": {
-                "risk_aversion": "0.5",
-                "cardinality_k": "25"
-            },
-            "tags": {
-                "mlflow.runName": "QAOA Optimization",
-                "strategy": "qaoa"
-            },
-            "artifacts": ["portfolio.csv", "config.yml"]
-        },
-        {
-            "run_id": "run-002",
-            "start_time": "2024-01-15T11:00:00Z",
-            "end_time": "2024-01-15T11:10:00Z",
-            "status": "FINISHED",
-            "command": "backtest",
-            "metrics": {
-                "total_return": 0.45,
-                "annualized_return": 0.12,
-                "sharpe_ratio": 0.75
-            },
-            "params": {
-                "strategy": "mvo",
-                "rebalance": "monthly"
-            },
-            "tags": {
-                "mlflow.runName": "MVO Backtest",
-                "strategy": "mvo"
-            },
-            "artifacts": ["backtest.csv", "equity_curve.png"]
-        }
-    ]
-    
-    return runs
+    """Get MLflow runs from the tracking server."""
+    try:
+        # Get all experiments
+        experiments = mlflow.search_experiments()
+        all_runs = []
+        
+        for exp in experiments:
+            # Search runs in each experiment
+            runs = mlflow.search_runs(
+                experiment_ids=[exp.experiment_id],
+                order_by=["start_time DESC"],
+                max_results=100
+            )
+            
+            for _, run in runs.iterrows():
+                # Get run details
+                run_info = mlflow.get_run(run['run_id'])
+                
+                # Extract metrics
+                metrics = {}
+                if hasattr(run_info, 'data') and run_info.data.metrics:
+                    metrics = run_info.data.metrics
+                
+                # Extract parameters
+                params = {}
+                if hasattr(run_info, 'data') and run_info.data.params:
+                    params = run_info.data.params
+                
+                # Extract tags
+                tags = {}
+                if hasattr(run_info, 'data') and run_info.data.tags:
+                    tags = run_info.data.tags
+                
+                # Get artifacts
+                artifacts = []
+                try:
+                    client = mlflow.tracking.MlflowClient()
+                    artifact_list = client.list_artifacts(run['run_id'])
+                    artifacts = [artifact.path for artifact in artifact_list]
+                except Exception as e:
+                    logger.warning(f"Failed to get artifacts for run {run['run_id']}: {e}")
+                
+                # Format run data
+                run_data = {
+                    "run_id": run['run_id'],
+                    "start_time": run['start_time'].isoformat() + "Z" if run['start_time'] else None,
+                    "end_time": run['end_time'].isoformat() + "Z" if run['end_time'] else None,
+                    "status": run['status'],
+                    "command": tags.get('command', 'unknown'),
+                    "metrics": metrics,
+                    "params": params,
+                    "tags": tags,
+                    "artifacts": artifacts
+                }
+                
+                # Sanitize the run data to handle inf/nan values
+                sanitized_run_data = sanitize_for_json(run_data)
+                all_runs.append(sanitized_run_data)
+        
+        # Sort by start time (most recent first)
+        all_runs.sort(key=lambda x: x['start_time'] or '', reverse=True)
+        
+        logger.info(f"Retrieved {len(all_runs)} runs from MLflow")
+        return all_runs
+        
+    except Exception as e:
+        logger.error(f"Failed to fetch MLflow runs: {e}")
+        # Return empty list if MLflow is not available
+        return []
 
 @app.get("/mlflow/runs/{run_id}")
 async def get_mlflow_run(run_id: str):

@@ -15,6 +15,7 @@ import {
   ExclamationTriangleIcon,
   ClockIcon
 } from '@heroicons/react/24/outline'
+import { QuantumLoadingScreen, useQuantumLoading } from './QuantumLoadingScreen'
 
 const optimizationSchema = z.object({
   solverType: z.enum(['qaoa', 'mvo', 'greedy']),
@@ -59,6 +60,9 @@ export function PortfolioOptimization() {
   const [currentJob, setCurrentJob] = useState<OptimizationJob | null>(null)
   const [activeTab, setActiveTab] = useState<'config' | 'results'>('config')
   
+  // Quantum loading hook
+  const quantumLoading = useQuantumLoading()
+  
   const {
     register,
     handleSubmit,
@@ -88,6 +92,9 @@ export function PortfolioOptimization() {
   const onSubmit = async (data: OptimizationForm) => {
     setIsLoading(true)
     setActiveTab('results')
+    
+    // Start quantum loading with appropriate algorithm type
+    quantumLoading.startLoading(data.solverType, 'Initializing optimization...')
     
     const job: OptimizationJob = {
       id: `optimize-${Date.now()}`,
@@ -143,6 +150,9 @@ export function PortfolioOptimization() {
           const statusResponse = await fetch(`/api/qepo/optimize/status/${result.job_id}`)
           const statusData = await statusResponse.json()
           
+          // Update quantum loading progress
+          quantumLoading.updateProgress(statusData.progress, statusData.message)
+          
           setCurrentJob({
             id: statusData.id,
             status: statusData.status,
@@ -163,12 +173,15 @@ export function PortfolioOptimization() {
           if (statusData.status === 'running') {
             setTimeout(pollJobStatus, 2000) // Poll every 2 seconds
           } else if (statusData.status === 'completed') {
+            quantumLoading.stopLoading()
             toast.success('Portfolio optimization completed successfully!')
           } else if (statusData.status === 'failed') {
+            quantumLoading.stopLoading()
             toast.error('Portfolio optimization failed')
           }
         } catch (error) {
           console.error('Error polling job status:', error)
+          quantumLoading.stopLoading()
           toast.error('Failed to get job status')
         }
       }
@@ -178,6 +191,7 @@ export function PortfolioOptimization() {
       
       toast.success('Portfolio optimization started!')
     } catch (error) {
+      quantumLoading.stopLoading()
       setCurrentJob({
         ...job,
         status: 'failed',
@@ -642,6 +656,18 @@ export function PortfolioOptimization() {
           </div>
         </div>
       )}
+      
+      {/* Quantum Loading Screen */}
+      <QuantumLoadingScreen
+        isLoading={quantumLoading.isLoading}
+        progress={quantumLoading.progress}
+        message={quantumLoading.message}
+        algorithm={quantumLoading.algorithm}
+        onCancel={() => {
+          quantumLoading.stopLoading()
+          setIsLoading(false)
+        }}
+      />
     </div>
   )
 }

@@ -15,9 +15,10 @@ import { PortfolioOptimization } from '@/components/PortfolioOptimization'
 import { Backtesting } from '@/components/Backtesting'
 import { Reporting } from '@/components/Reporting'
 import { Configuration } from '@/components/Configuration'
+import { LoadingScreenDemo } from '@/components/LoadingScreenDemo'
 import { JobMonitor } from '@/components/JobMonitor'
 
-type TabType = 'data' | 'optimize' | 'backtest' | 'report' | 'config' | 'monitor'
+type TabType = 'data' | 'optimize' | 'backtest' | 'report' | 'config' | 'monitor' | 'demo'
 
 const tabs = [
   { id: 'data', name: 'Data Ingestion', icon: ChartBarIcon },
@@ -26,6 +27,7 @@ const tabs = [
   { id: 'report', name: 'Reporting', icon: DocumentTextIcon },
   { id: 'config', name: 'Configuration', icon: CogIcon },
   { id: 'monitor', name: 'Job Monitor', icon: PlayIcon },
+  { id: 'demo', name: 'Loading Demo', icon: CpuChipIcon },
 ]
 
 export default function Home() {
@@ -45,6 +47,8 @@ export default function Home() {
         return <Configuration />
       case 'monitor':
         return <JobMonitor />
+      case 'demo':
+        return <LoadingScreenDemo />
       default:
         return <DataIngestion />
     }

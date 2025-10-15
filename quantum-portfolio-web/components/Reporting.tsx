@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import toast from 'react-hot-toast'
+import { mlflowApi, reportApi } from '../lib/api'
 import { 
   DocumentTextIcon, 
   ChartBarIcon,
@@ -63,9 +64,7 @@ export function Reporting() {
   const { data: runs, isLoading: runsLoading, refetch: refetchRuns } = useQuery(
     'mlflow-runs',
     async () => {
-      const response = await fetch('/api/qepo/mlflow/runs')
-      if (!response.ok) throw new Error('Failed to fetch runs')
-      return response.json() as Promise<MLflowRun[]>
+      return await mlflowApi.getRuns() as MLflowRun[]
     },
     {
       refetchInterval: 30000, // Refetch every 30 seconds
@@ -77,9 +76,7 @@ export function Reporting() {
     ['report-data', selectedRunId],
     async () => {
       if (!selectedRunId) return null
-      const response = await fetch(`/api/qepo/report/${selectedRunId}`)
-      if (!response.ok) throw new Error('Failed to fetch report data')
-      return response.json() as Promise<ReportData>
+      return await reportApi.getData(selectedRunId) as ReportData
     },
     {
       enabled: !!selectedRunId,
@@ -93,23 +90,12 @@ export function Reporting() {
     }
 
     try {
-      const response = await fetch('/api/qepo/report/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          run_id: selectedRunId,
-          format: reportFormat,
-          include_charts: includeCharts,
-        }),
+      const blob = await reportApi.generate({
+        run_id: selectedRunId,
+        format: reportFormat,
+        include_charts: includeCharts,
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to generate report')
-      }
-
-      const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url

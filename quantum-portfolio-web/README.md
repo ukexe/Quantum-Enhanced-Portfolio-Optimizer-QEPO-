@@ -25,7 +25,7 @@ A comprehensive web interface for the Quantum-Enhanced Portfolio Optimizer (QEPO
 ### Prerequisites
 - Node.js 18+ 
 - Python 3.11+ (for QEPO backend)
-- MLflow server running on port 5000
+- MLflow server running on port 5000 (see [MLflow Setup Guide](./MLFLOW_SETUP.md))
 
 ### Setup
 
@@ -40,7 +40,14 @@ A comprehensive web interface for the Quantum-Enhanced Portfolio Optimizer (QEPO
    npm install
    ```
 
-3. **Environment Configuration**
+3. **Start MLflow Server** (Required for Reporting & Analytics)
+   ```bash
+   cd backend
+   python start_mlflow.py
+   ```
+   See [MLflow Setup Guide](./MLFLOW_SETUP.md) for detailed instructions.
+
+4. **Environment Configuration**
    Create a `.env.local` file:
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:8000
@@ -48,19 +55,19 @@ A comprehensive web interface for the Quantum-Enhanced Portfolio Optimizer (QEPO
    NEXT_PUBLIC_MLFLOW_URL=http://localhost:5000
    ```
 
-4. **Start the development server**
+5. **Start the development server**
    ```bash
    npm run dev
    ```
 
-5. **Start the QEPO backend**
+6. **Start the QEPO backend** (Optional - for running actual optimizations)
    ```bash
    cd ../quantum-portfolio
    python -m qepo.cli data ingest
    python -m qepo.cli optimize
    ```
 
-6. **Start MLflow UI**
+7. **Start MLflow UI** (Alternative to step 3)
    ```bash
    mlflow ui --port 5000
    ```

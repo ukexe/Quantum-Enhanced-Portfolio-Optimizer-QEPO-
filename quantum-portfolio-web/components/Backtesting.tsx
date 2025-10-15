@@ -16,6 +16,7 @@ import {
   ArrowTrendingDownIcon
 } from '@heroicons/react/24/outline'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
+import { QuantumLoadingScreen, useQuantumLoading } from './QuantumLoadingScreen'
 
 const backtestSchema = z.object({
   strategy: z.enum(['qaoa', 'mvo', 'greedy']),
@@ -64,6 +65,9 @@ export function Backtesting() {
   const [currentJob, setCurrentJob] = useState<BacktestJob | null>(null)
   const [activeTab, setActiveTab] = useState<'config' | 'results'>('config')
   
+  // Quantum loading hook
+  const quantumLoading = useQuantumLoading()
+  
   const {
     register,
     handleSubmit,
@@ -90,6 +94,9 @@ export function Backtesting() {
   const onSubmit = async (data: BacktestForm) => {
     setIsLoading(true)
     setActiveTab('results')
+    
+    // Start quantum loading for backtesting
+    quantumLoading.startLoading('backtest', 'Initializing backtest...')
     
     const job: BacktestJob = {
       id: `backtest-${Date.now()}`,
@@ -140,6 +147,9 @@ export function Backtesting() {
           const statusResponse = await fetch(`/api/qepo/backtest/status/${result.job_id}`)
           const statusData = await statusResponse.json()
           
+          // Update quantum loading progress
+          quantumLoading.updateProgress(statusData.progress, statusData.message)
+          
           setCurrentJob({
             id: statusData.id,
             status: statusData.status,
@@ -166,12 +176,15 @@ export function Backtesting() {
           if (statusData.status === 'running') {
             setTimeout(pollJobStatus, 2000) // Poll every 2 seconds
           } else if (statusData.status === 'completed') {
+            quantumLoading.stopLoading()
             toast.success('Backtest completed successfully!')
           } else if (statusData.status === 'failed') {
+            quantumLoading.stopLoading()
             toast.error('Backtest failed')
           }
         } catch (error) {
           console.error('Error polling job status:', error)
+          quantumLoading.stopLoading()
           toast.error('Failed to get job status')
         }
       }
@@ -181,6 +194,7 @@ export function Backtesting() {
       
       toast.success('Backtest started!')
     } catch (error) {
+      quantumLoading.stopLoading()
       setCurrentJob({
         ...job,
         status: 'failed',
@@ -695,6 +709,18 @@ export function Backtesting() {
           </div>
         </div>
       )}
+      
+      {/* Quantum Loading Screen */}
+      <QuantumLoadingScreen
+        isLoading={quantumLoading.isLoading}
+        progress={quantumLoading.progress}
+        message={quantumLoading.message}
+        algorithm={quantumLoading.algorithm}
+        onCancel={() => {
+          quantumLoading.stopLoading()
+          setIsLoading(false)
+        }}
+      />
     </div>
   )
 }

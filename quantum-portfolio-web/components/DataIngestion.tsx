@@ -12,6 +12,7 @@ import {
   CheckCircleIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
+import { QuantumLoadingScreen, useQuantumLoading } from './QuantumLoadingScreen'
 
 const dataIngestionSchema = z.object({
   startDate: z.string().min(1, 'Start date is required'),
@@ -36,6 +37,9 @@ export function DataIngestion() {
   const [isLoading, setIsLoading] = useState(false)
   const [currentJob, setCurrentJob] = useState<DataIngestionJob | null>(null)
   
+  // Quantum loading hook
+  const quantumLoading = useQuantumLoading()
+  
   const {
     register,
     handleSubmit,
@@ -56,6 +60,9 @@ export function DataIngestion() {
 
   const onSubmit = async (data: DataIngestionForm) => {
     setIsLoading(true)
+    
+    // Start quantum loading for data ingestion
+    quantumLoading.startLoading('data-ingestion', 'Starting data ingestion...')
     
     const job: DataIngestionJob = {
       id: `data-${Date.now()}`,
@@ -103,6 +110,8 @@ export function DataIngestion() {
         message: `Data ingestion completed successfully. Downloaded ${result.numPriceRecords} price records for ${result.numTickers} tickers.`,
       })
       
+      quantumLoading.updateProgress(100, `Data ingestion completed successfully. Downloaded ${result.numPriceRecords} price records for ${result.numTickers} tickers.`)
+      setTimeout(() => quantumLoading.stopLoading(), 1000)
       toast.success('Data ingestion completed successfully!')
     } catch (error) {
       setCurrentJob({
@@ -112,6 +121,7 @@ export function DataIngestion() {
         message: `Data ingestion failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       })
       
+      quantumLoading.stopLoading()
       toast.error('Data ingestion failed')
     } finally {
       setIsLoading(false)
@@ -307,6 +317,18 @@ export function DataIngestion() {
           </div>
         </div>
       </div>
+      
+      {/* Quantum Loading Screen */}
+      <QuantumLoadingScreen
+        isLoading={quantumLoading.isLoading}
+        progress={quantumLoading.progress}
+        message={quantumLoading.message}
+        algorithm={quantumLoading.algorithm}
+        onCancel={() => {
+          quantumLoading.stopLoading()
+          setIsLoading(false)
+        }}
+      />
     </div>
   )
 }

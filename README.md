@@ -23,6 +23,14 @@ The Quantum-Enhanced Portfolio Optimizer (QEPO) is a comprehensive, open-source 
 - **🔧 Configuration Management**: YAML-based configuration with validation
 - **🚀 Production Ready**: Docker support, CI/CD, and deployment configurations
 
+---
+
+**👨‍💻 Author:** [Udhaya Kumar Arasu](https://www.linkedin.com/in/udhaya-kumar-a-exe/)  
+**📂 Full Source Code:** [GitHub Repository](https://github.com/ukexe/Quantum-Enhanced-Portfolio-Optimizer-QEPO-)  
+**🎥 Live Demo:** [3-Minute Project Walkthrough](https://drive.google.com/file/d/1lBq2J8BAgN2JbkoNrmsdE3sCgC0du390/view?usp=sharing)
+
+---
+
 ## 🏗️ Architecture
 
 ### System Overview
